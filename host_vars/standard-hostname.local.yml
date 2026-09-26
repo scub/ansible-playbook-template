@@ -1,0 +1,3 @@
+---
+# Global variables for all hosts
+custom_var: "matched standard-hostname.local.yml"

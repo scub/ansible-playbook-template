@@ -1,0 +1,5 @@
+---
+# file: roles/common/tasks/main.yml
+- name: Show groupvars for 'all'
+  debug:
+    msg: "I am {{inventory_hostname}} from all"

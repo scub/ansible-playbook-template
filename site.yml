@@ -1,0 +1,19 @@
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: standard
+  tasks:
+    - name: Standard group vars
+      debug:
+        msg: "I am {{inventory_hostname}} from the standard group"
+    - name: Show custom host var
+      debug:
+        var: hostvars[inventory_hostname]["custom_var"]
+    - name: Show "all" group var "global"
+      debug:
+        var: hostvars[inventory_hostname]["global"]
+    - name: Show matched group var "my_group"
+      debug:
+        var: hostvars[inventory_hostname]["my_group"]

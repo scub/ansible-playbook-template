@@ -1,0 +1,14 @@
+---
+- name: Update caches repository
+  apt:
+    update_cache: yes
+
+- name: Add the NodeJS LTS repo
+  ansible.builtin.deb822_repository:
+    name: nodejs
+    types: [deb]
+    uri: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+    suites: ["{{ ansible_distribution_release | lower }}"]
+    signed_by: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+    enabled: yes

@@ -1,0 +1,60 @@
+---
+driver:
+  name: docker
+
+verifier:
+  # kitchen-verifier-serverspec is broken on Debian
+  # (https://github.com/neillturner/kitchen-verifier-serverspec/pull/45)
+  additional_install_command: "sudo apt-get install -y ruby-bundler"
+  name: serverspec
+  default_pattern: true
+  remote_exec: true
+
+provisioner:
+  name: ansible_playbook
+  require_chef_for_busser: false
+  require_ansible_repo: true
+  ansible_verbose: true
+  ansible_verbosity: 2
+  ansible_diff: true
+  gather_facts: true
+  # File paths
+  ansible_inventory: hosts
+  playbook: site.yml
+  roles_path: roles
+  host_vars_path: host_vars
+  group_vars_path: group_vars
+
+  inventory:
+    connections:
+      default:
+        ansible_python_interpreter: /usr/bin/python3
+
+platforms:
+  - name: ubuntu
+    driver_config:
+      image: ubuntu:24.04
+
+suites:
+  - name: default
+    driver_config:
+      hostname: 'default-hostname.local'
+    provisioner:
+      ansible_limit: 'default-hostname.local'
+    verifier:
+      patterns:
+        - test/integration/default/**/*_spec.rb
+
+  - name: standard
+    includes: [ ubuntu ]
+    # Supply a custom hostname, should align with what is in `hosts`
+    driver_config:
+      hostname: 'standard-hostname.local'
+    # Make sure you limit the ansible run to this hostname or you'll match any `host` definitions
+    provisioner:
+      ansible_limit: 'standard-hostname.local'
+    verifier:
+      # the `additional_install_command` verifier option can be defined per-suite:
+      #additional_install_command: "sudo apt-get install -y ruby-bundler"
+      patterns:
+        - test/integration/standard/**/*_spec.rb
